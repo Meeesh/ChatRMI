@@ -84,9 +84,9 @@ public class GuiV3 extends JFrame{
         testText = new JTextArea();
         
         //RMI
-//        String chatServerURL="rmi://192.168.1.3/RMIChatServer";    	
-//    	System.setSecurityManager(new SecurityManager());    	
-//    	server = (ServerIF) Naming.lookup(chatServerURL);
+        String chatServerURL="rmi://192.168.1.100/RMIChatServer";    	
+    	System.setSecurityManager(new SecurityManager());    	
+    	server = (ServerIF) Naming.lookup(chatServerURL);
         
         pseudo = JOptionPane.showInputDialog("Entrez votre pseudo:");
         listUsrs = pseudo;
@@ -191,10 +191,10 @@ public class GuiV3 extends JFrame{
     private void sendMessage(ActionEvent evt) {                             
 //        testText.append(pseudo + " : " + messSend.getText() + "\n"); 
         try{
-            testText.append(server.getMessage() + "\n");
+            testText.append("Server : "+ server.getMessage() + "\n");
         }
         catch(RemoteException ex){
-            ex.getMessage();
+            System.out.println(ex.getMessage());
         }
         messSend.setText(null);
     }                            
