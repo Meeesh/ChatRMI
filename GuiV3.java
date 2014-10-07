@@ -84,13 +84,15 @@ public class GuiV3 extends JFrame{
         testText = new JTextArea();
         
         //RMI
-        String chatServerURL="rmi://192.168.1.100/RMIChatServer";    	
+        String chatServerURL="rmi://192.168.1.5/RMIChatServer";    	
     	System.setSecurityManager(new SecurityManager());    	
     	server = (ServerIF) Naming.lookup(chatServerURL);
         
         pseudo = JOptionPane.showInputDialog("Entrez votre pseudo:");
         listUsrs = pseudo;
         usersModel.addElement(listUsrs);
+        
+        //here call method on server to try to log in via given pseudo
         
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("Le chat a ReMI");
@@ -191,7 +193,8 @@ public class GuiV3 extends JFrame{
     private void sendMessage(ActionEvent evt) {                             
 //        testText.append(pseudo + " : " + messSend.getText() + "\n"); 
         try{
-            testText.append("Server : "+ server.getMessage() + "\n");
+            //here send message to server and get messages from server.
+            testText.append("Server : " + server.getMessage() + "\n");
         }
         catch(RemoteException ex){
             System.out.println(ex.getMessage());
@@ -199,7 +202,9 @@ public class GuiV3 extends JFrame{
         messSend.setText(null);
     }                            
 
-    private void newChatRoom(ActionEvent evt) {                             
+    private void newChatRoom(ActionEvent evt) {
+        
+        //here inform server of new chat room
         
         int[] selec = listUsrLog.getSelectedIndices();
         for(int i = 0; i < selec.length ; i++){
@@ -214,6 +219,7 @@ public class GuiV3 extends JFrame{
     }
     
     private void newChatRoomPriv(int index) { 
+        //here inform server of new private chat room
         String title = new String(listUsrs + " Private");
         tabChatRooms.add(title, testText);
         listUsrLog.clearSelection();
@@ -239,5 +245,5 @@ public class GuiV3 extends JFrame{
             tabChatRooms.add(title, testText);
             liste.clearSelection();
         }
-    }    
+    }
 }
