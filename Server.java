@@ -27,8 +27,23 @@ public class Server extends UnicastRemoteObject implements ServerIF {
 	@Override
 	public synchronized void logon(String login) throws RemoteException {
 		// TODO Auto-generated method stub
-		System.out.println(login+" vient de rejoindre le chat.");
-		chatUsers.add(login);
+		int i=chatUsers.indexOf(login);
+		if(i<0)
+		{
+			System.out.println(login+" vient de rejoindre le chat.");
+			chatUsers.add(login);
+		}
+	}
+	
+	@Override
+	public void logout(String login) throws RemoteException {
+		// TODO Auto-generated method stub
+		int i=chatUsers.indexOf(login);
+		if(i>=0)
+		{
+			System.out.println(login+" vient de quitter le chat.");
+			chatUsers.remove(i);
+		}
 	}
 
 	@Override
@@ -49,10 +64,16 @@ public class Server extends UnicastRemoteObject implements ServerIF {
 		return messages;
 	}
 
+	public synchronized ArrayList<String> getChatUsers() throws RemoteException {
+		return chatUsers;
+	}
+
 	@Override
 	public synchronized int getCurrentMessageSize() throws RemoteException {
 		// TODO Auto-generated method stub
 		return lastMessages.size();
 	}
+
+	
 
 }

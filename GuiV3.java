@@ -98,9 +98,22 @@ public class GuiV3 extends JFrame{
         
         //here call method on server to try to log in via given pseudo
         
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("Le chat a ReMI");
         setBounds(new Rectangle(300, 150, 800, 500));
+          
+        this.addWindowListener(new WindowAdapter()
+		{
+			public void windowClosing(WindowEvent e)
+			{
+				try {
+					server.logout(pseudo);
+				} catch (RemoteException ex) {
+					// TODO Auto-generated catch block
+					ex.printStackTrace();
+				}
+		        System.exit(0);
+			}
+		});
         
         sendBut.setText("SEND");
         sendBut.addActionListener(new java.awt.event.ActionListener() {
@@ -232,6 +245,12 @@ public class GuiV3 extends JFrame{
 
     private void logOut(java.awt.event.ActionEvent evt) {                        
         // TODO add your handling code here:
+    	try {
+			server.logout(pseudo);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         System.exit(0);
     }
     
@@ -258,7 +277,13 @@ public class GuiV3 extends JFrame{
 			
     		testText.append(server.getLastMessageUpdate(idLastMessage));
 			idLastMessage=server.getCurrentMessageSize();
-			
+			ArrayList<String> usersList=server.getChatUsers();
+			usersModel.clear();
+			for(int i=0;i<usersList.size();i++)
+			{
+				usersModel.addElement(usersList.get(i));
+			}
+			listUsrLog.setModel(usersModel);
 		} 
     	catch (RemoteException e) {
 			// TODO Auto-generated catch block

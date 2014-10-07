@@ -10,10 +10,14 @@ public interface ServerIF extends Remote {
 	
 	void logon(String login) throws RemoteException;
 	
+	void logout(String login) throws RemoteException;
+	
 	void sendMessage(String message) throws RemoteException;
 	
 	String getLastMessageUpdate(int id) throws RemoteException;
 	
 	int getCurrentMessageSize() throws RemoteException;
+	
+	ArrayList<String> getChatUsers() throws RemoteException;
 
 }
