@@ -2,6 +2,7 @@ package thePack;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 public interface ServerIF extends Remote {
 	
@@ -10,5 +11,9 @@ public interface ServerIF extends Remote {
 	void logon(String login) throws RemoteException;
 	
 	void sendMessage(String message) throws RemoteException;
+	
+	String getLastMessageUpdate(int id) throws RemoteException;
+	
+	int getCurrentMessageSize() throws RemoteException;
 
 }

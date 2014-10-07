@@ -8,10 +8,11 @@ import java.util.Scanner;
 
 public class Client {
     //composants fonctionnel
+	
     
     public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException {
     	
-    	String chatServerURL="rmi://192.168.1.3/RMIChatServer";
+    	String chatServerURL="rmi://192.168.1.5/RMIChatServer";
     	
     	System.setSecurityManager(new SecurityManager());
     	
@@ -25,12 +26,15 @@ public class Client {
     	server.logon(login);
     	
     	String message;
+    	int idLastMessage=0;
     	
     	while(true)
     	{
     		System.out.println("Entrez votre message :");
     		message=input.nextLine();
     		server.sendMessage(login+" dit : "+message);
+    		System.out.println(server.getLastMessageUpdate(idLastMessage));
+    		idLastMessage=server.getCurrentMessageSize();
     	}
     	
     }

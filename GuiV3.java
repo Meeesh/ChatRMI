@@ -9,6 +9,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.net.MalformedURLException;
 import java.rmi.*;
+import java.util.ArrayList;
+
 import javax.swing.*;
 
 /**
@@ -29,6 +31,7 @@ public class GuiV3 extends JFrame{
     // Variable for functionning
     private String pseudo;
     private int nbChatRooms = 0;
+    private int idLastMessage = 0;
     
     //RMI
     private ServerIF server;
@@ -89,6 +92,7 @@ public class GuiV3 extends JFrame{
     	server = (ServerIF) Naming.lookup(chatServerURL);
         
         pseudo = JOptionPane.showInputDialog("Entrez votre pseudo:");
+        server.logon(pseudo);
         listUsrs = pseudo;
         usersModel.addElement(listUsrs);
         
@@ -191,10 +195,11 @@ public class GuiV3 extends JFrame{
         
         
     private void sendMessage(ActionEvent evt) {                             
-//        testText.append(pseudo + " : " + messSend.getText() + "\n"); 
+//        testText.append("Server : " + server.getMessage() + "\n");
         try{
             //here send message to server and get messages from server.
-            testText.append("Server : " + server.getMessage() + "\n");
+        	server.sendMessage(pseudo + " : " + messSend.getText()); 
+        	clientUpdate();
         }
         catch(RemoteException ex){
             System.out.println(ex.getMessage());
@@ -245,5 +250,21 @@ public class GuiV3 extends JFrame{
             tabChatRooms.add(title, testText);
             liste.clearSelection();
         }
+    }
+    
+    public void clientUpdate()
+    {
+    	try {
+			
+    		testText.append(server.getLastMessageUpdate(idLastMessage));
+			idLastMessage=server.getCurrentMessageSize();
+			
+		} 
+    	catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	
     }
 }

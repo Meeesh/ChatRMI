@@ -25,17 +25,34 @@ public class Server extends UnicastRemoteObject implements ServerIF {
 	}
 
 	@Override
-	public void logon(String login) throws RemoteException {
+	public synchronized void logon(String login) throws RemoteException {
 		// TODO Auto-generated method stub
 		System.out.println(login+" vient de rejoindre le chat.");
 		chatUsers.add(login);
 	}
 
 	@Override
-	public void sendMessage(String message) throws RemoteException {
+	public synchronized void sendMessage(String message) throws RemoteException {
 		// TODO Auto-generated method stub
 		lastMessages.add(message);
 		System.out.println(message);
+	}
+
+	@Override
+	public synchronized String getLastMessageUpdate(int id) throws RemoteException {
+		// TODO Auto-generated method stub
+		String messages="";
+		for(int now=lastMessages.size();id<now;id++)
+		{
+			messages=(messages+lastMessages.get(id)+"\n");
+		}
+		return messages;
+	}
+
+	@Override
+	public synchronized int getCurrentMessageSize() throws RemoteException {
+		// TODO Auto-generated method stub
+		return lastMessages.size();
 	}
 
 }
