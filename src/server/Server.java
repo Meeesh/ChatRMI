@@ -77,14 +77,30 @@ public class Server extends UnicastRemoteObject implements ServerIF {
 		}
 		if(roomID==-1)
 		{
-			rooms.add(new ArrayList<String>());
-			rooms.get(i).add(roomName);
-			roomID=i;
-			if(roomKind==1)
+			if(roomKind==0)
 			{
-				publicRoomsName.add(roomName);
+				for(i=0;i<rooms.size();i++)
+				{
+					String[] pseudos=roomName.split("privatechatwith");
+					check=(String) rooms.get(i).get(0);
+					if(check.startsWith(pseudos[1])==true && check.endsWith(pseudos[0])==true)
+					{
+						roomID=i;
+						i=rooms.size();
+					}
+				}
 			}
-			System.out.println("New room created : "+roomName+" with ID : "+roomID);
+			if(roomID==-1)
+			{
+				rooms.add(new ArrayList<String>());
+				rooms.get(i).add(roomName);
+				roomID=i;
+				if(roomKind==1)
+				{
+					publicRoomsName.add(roomName);
+				}
+				System.out.println("New room created : "+roomName+" with ID : "+roomID);
+			}
 		}
 		return roomID;
 	}

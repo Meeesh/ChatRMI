@@ -6,15 +6,22 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Properties;
 
+import javax.swing.JOptionPane;
+
 public class ClientEngine {
-	private static String ip = "10.113.31.52";   //plus facile a trouver pour changer si on change de reseaux
 	
 	public static void main(String args[]){
 		try{
+			String ip=JOptionPane.showInputDialog(null,"Entrez l'adresse IP du serveur : ","10.113.31.");
+			if(ip==null)
+			{
+				System.exit(0);
+			}
+			
 			String url, policyfile;
 			
 			url = new String ("file:D:/Users/Michael/Documents/EclipseProjects/ChatGui/bin/thePack/ServerIF.class");
-			policyfile = new String("server.policy");
+			policyfile = new String("chat.policy");
 			
 			
 			Properties props = System.getProperties(); 

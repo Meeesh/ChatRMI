@@ -132,7 +132,7 @@ public class ClientGui extends JFrame implements Runnable{
 	                usersModel.addElement(pseudo);
 	                
 	                
-	                setTitle("Le chat a ReMI");
+	                setTitle("Le chat a ReMI - "+pseudo);
 	                setBounds(new Rectangle(300, 150, 800, 500));
 	                
 	                this.addWindowListener(new WindowAdapter()
@@ -187,7 +187,7 @@ public class ClientGui extends JFrame implements Runnable{
 	                listUsrLog.setModel(usersModel);
 	                jScrollPane2.setViewportView(listUsrLog);
 	
-	                startChat.setText("CREATE NEW ROOM");
+	                startChat.setText("CREATE/JOIN NEW ROOM");
 	                startChat.addActionListener(new java.awt.event.ActionListener() {
 	                    public void actionPerformed(java.awt.event.ActionEvent evt) {
 	                        newChatRoom(evt);
@@ -254,8 +254,6 @@ public class ClientGui extends JFrame implements Runnable{
 	private void sendMessage(ActionEvent evt) {
       try{
           //here send message to server and get messages from server.
-    	  System.out.println(tabChatRooms.getSelectedIndex());
-    	  System.out.println("Send message to roomID: "+roomsID.get(tabChatRooms.getSelectedIndex()*2));
       	server.sendMessage(pseudo + " : " + messSend.getText(),roomsID.get(tabChatRooms.getSelectedIndex()*2)); 
       	clientUpdate();
       }
@@ -266,6 +264,8 @@ public class ClientGui extends JFrame implements Runnable{
 
   private void newChatRoom(ActionEvent evt) {
       String title=JOptionPane.showInputDialog(null,"Nom de la room : ");
+      if(title == null)
+    	  return;
       //here inform server of new chat room
       
 	   try {
