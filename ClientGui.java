@@ -52,6 +52,7 @@ public class ClientGui extends JFrame implements Runnable{
     private int nbChatRooms = 0;
     private int idLastMessage = 0;
     private ArrayList<JTextArea> messArea;
+    private ArrayList<Integer> roomsID;
     
 // RMI
     ServerIF server;
@@ -110,6 +111,7 @@ public class ClientGui extends JFrame implements Runnable{
 	                listUsrLog = new JList<String>();
 	                startChat = new JButton();
 	                messArea = new ArrayList<JTextArea>();
+	                roomsID = new ArrayList<Integer>();
 	                
 	                //process de login
 	                pseudo = null;
@@ -252,7 +254,7 @@ public class ClientGui extends JFrame implements Runnable{
 	private void sendMessage(ActionEvent evt) {
       try{
           //here send message to server and get messages from server.
-      	server.sendMessage(pseudo + " : " + messSend.getText()); 
+      	server.sendMessage(pseudo + " : " + messSend.getText(),roomsID.get(tabChatRooms.getSelectedIndex())/3); 
       	clientUpdate();
       }
       catch(RemoteException ex){
@@ -262,22 +264,25 @@ public class ClientGui extends JFrame implements Runnable{
   }                            
 
   private void newChatRoom(ActionEvent evt) {
-      
+      String title=JOptionPane.showInputDialog(null,"Nom de la room : ");
       //here inform server of new chat room
-	  
       
-      int[] selec = listUsrLog.getSelectedIndices();
-      for(int i = 0; i < selec.length ; i++){
-//          roomsModel.addElement(listUsrs.get(selec[i]) + " Room");
-          String title = new String("Room " + nbChatRooms++);
-          roomsModel.addElement(title);
-          
-          
-          JTextArea newTextArea = new JTextArea();
-          scroll = new JScrollPane(newTextArea);
-          messArea.add(newTextArea);
-          tabChatRooms.add(title, scroll);
-      }
+	   try {
+			roomsID.add(server.joinRoom(title, (short) 0));
+			roomsID.add(0);
+		} 
+	      catch (RemoteException e) {
+			// TODO Auto-generated catch block
+		e.printStackTrace();
+	  }
+	  
+      roomsModel.addElement(title);
+      
+      JTextArea newTextArea = new JTextArea();
+      scroll = new JScrollPane(newTextArea);
+      messArea.add(newTextArea);
+      tabChatRooms.add(title, scroll);
+  
       
       listChatRooms.setModel(roomsModel);
       listUsrLog.clearSelection();
@@ -285,9 +290,17 @@ public class ClientGui extends JFrame implements Runnable{
   
   private void newChatRoomPriv(int index) { 
       //here inform server of new private chat room
-	  String title = new String(pseudo + " Private");
-
-      
+	try 
+	{
+		roomsID.add(server.joinRoom(pseudo+"privatechatwith"+usersModel.get(index), (short) 0));
+		roomsID.add(0);
+	} 
+	catch (RemoteException e) 
+	{
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	  String title = new String(usersModel.get(index) + " Private");
 	  JTextArea newTextArea = new JTextArea();
       scroll = new JScrollPane(newTextArea);
       messArea.add(newTextArea);
@@ -312,10 +325,22 @@ public class ClientGui extends JFrame implements Runnable{
   }
   
   private void clickDooubleRoom(MouseEvent evt){
+	  
       JList<String> liste = (JList<String>)evt.getSource();
       if(evt.getClickCount() >= 2){
           int selec = listChatRooms.getSelectedIndex();
           String title = roomsModel.get(selec);
+          
+          try 
+      	{
+      		roomsID.add(server.joinRoom(title, (short) 0));
+      		roomsID.add(0);
+      	} 
+      	catch (RemoteException e) 
+      	{
+      		// TODO Auto-generated catch block
+      		e.printStackTrace();
+      	}
 
           
           JTextArea newTextArea = new JTextArea();
@@ -333,13 +358,18 @@ public class ClientGui extends JFrame implements Runnable{
   		//getting the currently selected tab
   		if(tabChatRooms.getTabCount() > 0){
   			//TODO append the text to the arraylist of textarea
-	  		JScrollPane tempSP = (JScrollPane)tabChatRooms.getComponentAt(tabChatRooms.getSelectedIndex());
-	  		JViewport tempVP = tempSP.getViewport();
-	  		JTextArea tempTA = (JTextArea)tempVP.getView();
-	  		tempTA.setCaretPosition(tempTA.getDocument().getLength());
-	  		tempTA.append(server.getLastMessageUpdate(idLastMessage));
-	  		
-			idLastMessage=server.getCurrentMessageSize();
+            ArrayList<String> toDisplay=new ArrayList<String>();
+  			toDisplay=server.getLastMessageUpdate(roomsID);
+  			for(int i=0;i<toDisplay.size();i++)
+  			{
+		  		JScrollPane tempSP = (JScrollPane)tabChatRooms.getComponentAt(i);
+		  		JViewport tempVP = tempSP.getViewport();
+		  		JTextArea tempTA = (JTextArea)tempVP.getView();
+		  		tempTA.setCaretPosition(tempTA.getDocument().getLength());
+		  		tempTA.append(toDisplay.get(i));
+		  		roomsID=server.getCurrentMessageSize(roomsID);
+  			}
+  		}
 			ArrayList<String> usersList=server.getChatUsers();
 			usersModel.clear();
 			for(int i=0;i<usersList.size();i++)
@@ -347,7 +377,14 @@ public class ClientGui extends JFrame implements Runnable{
 				usersModel.addElement(usersList.get(i));
 			}
 			listUsrLog.setModel(usersModel);
-  		}
+			ArrayList<String> roomsList=server.publicRoomsName();
+			roomsModel.clear();
+			for(int i=0;i<roomsList.size();i++)
+			{
+				roomsModel.addElement(roomsList.get(i));
+			}
+			listChatRooms.setModel(roomsModel);
+  		
 	} 
   	catch (RemoteException e) {
 		System.out.println(e.getMessage());

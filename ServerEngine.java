@@ -15,7 +15,7 @@ public class ServerEngine {
 		
 		System.setSecurityManager(new SecurityManager());
 		Naming.rebind("RMIChatServer", new Server());
-		System.out.println("Server lancer");
+		System.out.println("Server started");
 	}
     
 }

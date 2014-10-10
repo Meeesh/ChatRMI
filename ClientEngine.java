@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 import java.util.Properties;
 
 public class ClientEngine {
-	private static String ip = "10.113.101.55";   //plus facile a trouver pour changer si on change de reseaux
+	private static String ip = "192.168.1.3";   //plus facile a trouver pour changer si on change de reseaux
 	
 	public static void main(String args[]){
 		try{
