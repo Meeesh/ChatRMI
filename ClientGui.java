@@ -254,21 +254,22 @@ public class ClientGui extends JFrame implements Runnable{
 	private void sendMessage(ActionEvent evt) {
       try{
           //here send message to server and get messages from server.
-      	server.sendMessage(pseudo + " : " + messSend.getText(),roomsID.get(tabChatRooms.getSelectedIndex())/3); 
+    	  System.out.println(tabChatRooms.getSelectedIndex());
+    	  System.out.println("Send message to roomID: "+roomsID.get(tabChatRooms.getSelectedIndex()*2));
+      	server.sendMessage(pseudo + " : " + messSend.getText(),roomsID.get(tabChatRooms.getSelectedIndex()*2)); 
       	clientUpdate();
       }
       catch(RemoteException ex){
           System.out.println(ex.getMessage());
       }
-      messSend.setText(null);
-  }                            
+      messSend.setText(null);  }                            
 
   private void newChatRoom(ActionEvent evt) {
       String title=JOptionPane.showInputDialog(null,"Nom de la room : ");
       //here inform server of new chat room
       
 	   try {
-			roomsID.add(server.joinRoom(title, (short) 0));
+			roomsID.add(server.joinRoom(title, (short) 1));
 			roomsID.add(0);
 		} 
 	      catch (RemoteException e) {
@@ -333,7 +334,7 @@ public class ClientGui extends JFrame implements Runnable{
           
           try 
       	{
-      		roomsID.add(server.joinRoom(title, (short) 0));
+      		roomsID.add(server.joinRoom(title, (short) 1));
       		roomsID.add(0);
       	} 
       	catch (RemoteException e) 
